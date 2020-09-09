@@ -276,10 +276,13 @@ key = 'KEY_PATH'
 def lambda_handler(event,context):
 
     # download s3 csv file to lambda tmp folder
+    
     local_file_name = '/tmp/account_mapping.csv' #
     s3.Bucket(BUCKET_NAME).download_file(key,local_file_name)
     
-    # account name and number you want to append. Here we have to use the information that comes with the event that triggers the lambda function (the CreateManagedAccount event)
+    # account name and number you want to append. Here we have to use the information
+    # that comes with the event that triggers the lambda function (the CreateManagedAccount event)
+    
     newaccount = ['NewAccount','123456789123'] 
     
     # write the data into '/tmp' folder
