@@ -379,7 +379,8 @@ ORDER BY  line_item_usage_account_id, cost DESC
 
 ---
 
-And we could continue like this...
+**Did you like Amazon Athena and want to learn more?**  
+We have published a [full workshop dedicated to Amazon Athena](https://athena-in-action.workshop.aws/ "Amazon Athena Workshop"), covering from the basics to run machine learning queries.
 
 ---
 
@@ -396,3 +397,7 @@ Examples:
 
 ![alt text](https://github.com/denegrij/CUR/blob/master/Dashboard1.png "Dashboard example 1")
 ![alt text](https://github.com/denegrij/CUR/blob/master/Dashboard2.png "Dashboard example 1")
+
+---
+
+Once again, if you want to learn more, in the Amazon Athena workshop pointed out before, there is a very detailed [dedicated lab about Amazon QuickSight!](https://athena-in-action.workshop.aws/30-basics/307-quicksight.html "Amazon QuickSight Workshop").
