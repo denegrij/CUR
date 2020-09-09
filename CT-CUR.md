@@ -1,4 +1,4 @@
-# Cost and Usage report standard queries in AWS Control Tower enviornment - Set up
+# Cost and Usage report standard queries in AWS Control Tower environment - Set up
 
 As you might know, AWS Cost and Usage Reports tracks your AWS usage and provides estimated charges associated with your account. Each report contains line items for each unique combination of AWS products, usage type, and operation that you use in your AWS account. You can customize the AWS Cost and Usage Reports to aggregate the information either by the hour or by the day.
 
