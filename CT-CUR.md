@@ -208,7 +208,7 @@ ORDER BY  line_item_usage_account_id, cost DESC
 
 For the next query, I was a little bit more creative, as I needed to know the AWS Accounts by their name, not the AWS Account number (it is an AWS Organization with dozens of accounts). Problem is that CUR files doesn't export that information. So, I created in Amazon Athena a new table with two columns: the AWS Account name and the AWS Account number (wow, that's creative?)
 
-Pretty easy, first I uploaded a csv file with couple of AWS Accounts to the Amazon S3 buckets (in this example in the "Accounts" directory):
+Pretty easy, first I uploaded a csv file with couple of AWS Accounts to the Amazon S3 bucket (in this example in the "Accounts" directory):
 
 | Account name        | Account ID
 | ------------- |:-------------:|
