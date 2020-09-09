@@ -398,7 +398,7 @@ We have published a [full workshop dedicated to Amazon Athena](https://athena-in
 
 ---
 
-But... there is always a *but*... you might be thinking how to view this information in a more ~~less-geek~~user friendly way
+But... there is always a *but*... you might be thinking how to view this information in a ~~less-geek~~ more user friendly way
 
 Well, that's not hard to do with [Amazon QuickSight](https://aws.amazon.com/quicksight/)
 
