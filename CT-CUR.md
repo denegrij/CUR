@@ -94,17 +94,17 @@ Be sure to align the Region when using the template.
         b. AWSCURCrawlerLambdaExecutor  
         c. AWSS3CURLambdaExecutor  
 
-    - An AWS Glue database
+    - An AWS Glue database  
         a. athenacurcfn
 
-    - An AWS Glue crawler
+    - An AWS Glue crawler  
         a. AWSCURCrawler
 
-    - Two Lambda functions:  
+    - Two Lambda functions  
         a. AWSCURInitializer (this AWS Lambda Function is triggered by Amazon S3 when a new CUR report file is uploaded (or updated) and starts the AWS Glue Crawler, so it can update the Amazon Athena data catalog).  
         b. AWSS3CURNotification.  
 
-    - An Amazon S3 notification
+    - An Amazon S3 notification  
         a. *random*  
 
 16. Choose **Create**.
