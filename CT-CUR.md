@@ -252,7 +252,7 @@ A lifecycle event's purpose is to mark the completion of certain AWS Control Tow
 
 So, looking at the events related to AWS accounts, we can find [CreateManagedAccount](https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html#create-managed-account "CreateManagedAccount") which, as its name suggests is an event that gets generated every time AWS Control Tower successfully completed an action to create and provision a new account using account factory.  
 
-> Have you already though about it? No?... well, what happens when you *rename* an AWS account?... well for that we have a different lifecyle event that we can use similarly to update the Amazon Athena table: [UpdateManagedAccount](https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html#update-managed-account).  
+> Have you already thought about it? No?... well, what happens when you *rename* an AWS account?... well for that we have a different lifecyle event that we can use similarly to update the Amazon Athena table: [UpdateManagedAccount](https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html#update-managed-account).  
 
 That's great! so now, we can update our Amazon Athena *account_name* table with the newly created account. But how?
 You could trigger an AWS Lambda function to *append* a line in the file that contains your accounts and voilá! As Amazon Athena queries directly to Amazon S3, every time I query that table I will get the latest info.
