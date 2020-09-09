@@ -204,16 +204,21 @@ ORDER BY  line_item_usage_account_id, cost DESC
 
 ---
 
-Now, for the next one, I was a little bit more creative. As I needed to know the AWS Accounts by their name, not the AWS Account number. Problem is that CUR files doesn't export that information. So, I created in Amazon Athena a new table with two columns: the AWS Account number and the AWS Account name (wow, that's creative?)
+### Let's complicate things a bit (just for the sake of having "better" data)  
+
+For the next query, I was a little bit more creative, as I needed to know the AWS Accounts by their name, not the AWS Account number (it is an AWS Organization with dozens of accounts). Problem is that CUR files doesn't export that information. So, I created in Amazon Athena a new table with two columns: the AWS Account name and the AWS Account number (wow, that's creative?)
 
 Pretty easy, first I uploaded a csv file with couple of AWS Accounts to the Amazon S3 buckets (in this example in the "Accounts" directory):
 
 | Account name        | Account ID
 | ------------- |:-------------:|
 | Master      | 123456789123
-| Network      | 123456789123
+| Network      | 123456789123  
+
 
 ![alt text](https://github.com/denegrij/CUR/blob/master/accounts.png "Accounts mapping")
+
+Then create the Amazon Athena Table based on that file:  
 
 ```sql
 CREATE EXTERNAL TABLE `account_name`(
@@ -232,23 +237,26 @@ TBLPROPERTIES (
   'transient_lastDdlTime'='1597156500')
   ````
 
-Then I can insert rows into that table whenever I create a new AWS Account in my AWS Organization (or remove when I deleted):
+If I create one or two AWS Accounts a year in our AWS environment, then I could insert rows into that table whenever I create a new AWS Account in my AWS Organization (or remove when I deleted):
 
 ```sql
 INSERT INTO account_name 
 VALUES ('Any_Oter_Account','123456789123')
 ````
 
-You might be asking... how that could scale?... well... not really. Remember we talked about *event driven* architectures? Well, AWS Control Tower has what we call [Lifecycle Events](https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html "Lifecycle Events"). 
+However, you might be asking... how that could scale?... well... it doesn't really. 
+Remember we talked about *event driven* architectures? Well, AWS Control Tower has what we call [Lifecycle Events](https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html "Lifecycle Events"). 
 
-So, if we take a closer look, we can find an event called [CreateManagedAccount](https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html#create-managed-account "CreateManagedAccount") which, as its name points out is an event that gets generated every time AWS Control Tower successfully completed an action to create and provision a new account using account factory.
+A lifecycle event's purpose is to mark the completion of certain AWS Control Tower actions that change the state of resources. Lifecycle events apply to resources that AWS Control Tower creates or manages, such as organizational units (OUs), accounts, and guardrails.
+
+So, looking at the events related to AWS accounts, we can find [CreateManagedAccount](https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html#create-managed-account "CreateManagedAccount") which, as its name suggests is an event that gets generated every time AWS Control Tower successfully completed an action to create and provision a new account using account factory.
 
 That's great! so now, we can update our Amazon Athena *account_name* table with the newly created account. But how?
-You could trigger an AWS Lambda function to *append* a line in the file that contains your accounts and voilá!
+You could trigger an AWS Lambda function to *append* a line in the file that contains your accounts and voilá! As Amazon Athena queries directly to Amazon S3, every time I query that table I will get the latest info.
 
-[Here](https://controltower.aws-management.tools/automation/lifecycle/) you can find more examples of using AWS Control Tower Lifecycle events to trigger other actions.
+> [In this workshop](https://controltower.aws-management.tools/automation/lifecycle/) you can find more examples of using AWS Control Tower Lifecycle events to trigger other actions.  
 
-An AWS Lambda function example to append the newly created AWS Account info to the Amazon S3 file could be (still needs the newly created account number and name as parameters):
+An AWS Lambda function example to append the newly created AWS account info to the Amazon S3 file could be (still needs the newly created account number and name as parameters):
 
 ```python
 
@@ -259,34 +267,34 @@ import csv
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(BUCKET_NAME) # Enter your bucket name, e.g 'Data'
 
-# key path, e.g.'customer_profile/Reddit_Historical_Data.csv'
+# key path, e.g.'Accounts/aws_account_name_mapping.csv'
 key = 'KEY_PATH'
 
 def lambda_handler(event,context):
 
     # download s3 csv file to lambda tmp folder
-    local_file_name = '/tmp/test.csv' #
+    local_file_name = '/tmp/account_mapping.csv' #
     s3.Bucket(BUCKET_NAME).download_file(key,local_file_name)
     
-    # list you want to append
-    lists = ['NewAccount','123456789123'] 
+    # account name and number you want to append. Here we have to use the information that comes with the event that triggers the lambda function (the CreateManagedAccount event)
+    newaccount = ['NewAccount','123456789123'] 
     
     # write the data into '/tmp' folder
     with open('/tmp/test.csv','r') as infile:
-        reader = list(csv.reader(infile))
+        reader = newaccount(csv.reader(infile))
         reader = reader[::-1] # the date is ascending order in file
-        reader.insert(0,lists)
+        reader.insert(0,newaccount)
     
-    with open('/tmp/test.csv', 'w', newline='') as outfile:
+    with open('/tmp/account_mapping.csv', 'w', newline='') as outfile:
         writer = csv.writer(outfile)
-        for line in reversed(reader): # reverse order
-            writer.writerow(line)
+        for newaccount in reversed(reader): # reverse order
+            writer.writerow(newaccount)
     
     # upload file from tmp to s3 key
-    bucket.upload_file('/tmp/test.csv', key)
+    bucket.upload_file('/tmp/account_mapping.csv', key)
     
     return {
-        'message': 'success!!'
+        'message': 'Done!'
     }
 ````
     
