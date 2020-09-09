@@ -244,7 +244,8 @@ INSERT INTO account_name
 VALUES ('Any_Oter_Account','123456789123')
 ````
 
-However, you might be asking... how that could scale?... well... it doesn't really. 
+However, you might be asking... how could that scale?... well... it doesn't really.  
+
 Remember we talked about *event driven* architectures? Well, AWS Control Tower has what we call [Lifecycle Events](https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html "Lifecycle Events"). 
 
 A lifecycle event's purpose is to mark the completion of certain AWS Control Tower actions that change the state of resources. Lifecycle events apply to resources that AWS Control Tower creates or manages, such as organizational units (OUs), accounts, and guardrails.
